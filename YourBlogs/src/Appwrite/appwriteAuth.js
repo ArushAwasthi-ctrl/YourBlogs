@@ -12,7 +12,7 @@ class AuthServices {
     this.account = new Account(this.client);
   }
 
-  async CreateAccount({ username, email, password }) {
+  async createAccount({ username, email, password }) {
     try {
       const user = await this.account.create({
         $id: ID.unique(),
@@ -27,7 +27,7 @@ class AuthServices {
     }
   }
 
-  async LoginAccount({ email, password }) {
+  async loginAccount({ email, password }) {
     try {
       const user = await this.account.createEmailPasswordSession({
         email,
@@ -52,9 +52,9 @@ class AuthServices {
     }
   }
 
-  async LogoutAccount() {
+  async logoutAccount() {
     try {
-      await this.account.deleteSessions();
+      await this.account.deleteSessions('current');
       return true;
     } catch (error) {
       console.error("Logout failed:", error.message);
