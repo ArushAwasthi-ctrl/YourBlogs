@@ -10,7 +10,6 @@ function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState("");
-  const [btnText, setBtnText] = useState("Create Account");
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit } = useForm();
 
@@ -18,26 +17,31 @@ function Signup() {
     setError("");
     setLoading(true);
     try {
-      const userData = await authServices.createAccount(data);
-      if (!userData) {
-        setError("Failed to create account. Try again.");
-        setLoading(false);
-        return;
-      }
-      const currentUser = await authServices.getCurrentUser();
-      if (currentUser) {
-        dispatch(login(currentUser));
-        navigate("/");
-      } else {
-        setError("Failed to fetch user data.");
-        setLoading(false);
+      await authServices.createAccount(data); // Create the account
+
+      // Immediately log in
+      const user = await authServices.loginAccount({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (user) {
+        const currentUser = await authServices.getCurrentUser();
+        if (currentUser) {
+          dispatch(login(currentUser));
+          navigate("/");
+        } else {
+          setError("Failed to fetch user data after login.");
+        }
       }
     } catch (err) {
       const errorMessage =
         err?.message ||
         err?.response?.message ||
+        err?.response?.data?.message ||
         "Something went wrong. Try again.";
       setError(errorMessage);
+    } finally {
       setLoading(false);
     }
   };
