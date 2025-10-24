@@ -16,19 +16,21 @@ function App() {
         else dispatch(logout());
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [dispatch]);
 
   return !Loading ? (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      <main className="grow w-full ">Hello</main>
       <Outlet />
       <Footer/>
     </div>
   ) : (
-    <div className="flex items-center justify-center h-screen text-xl font-semibold text-gray-600">
-      Loading...
-    </div>
+    <div className="flex items-center justify-center h-screen">
+  <div className="animate-pulse space-y-4 text-gray-400">
+    <div className="h-6 w-40 bg-gray-300 rounded"></div>
+    <div className="h-6 w-56 bg-gray-300 rounded"></div>
+  </div>
+</div>
   );
 }
 

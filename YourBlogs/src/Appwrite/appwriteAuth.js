@@ -15,7 +15,7 @@ class AuthServices {
   async createAccount({ username, email, password }) {
     try {
       const user = await this.account.create({
-        $id: ID.unique(),
+        userId: ID.unique(),
         username,
         email,
         password,
