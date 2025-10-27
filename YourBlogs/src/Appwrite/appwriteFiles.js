@@ -1,7 +1,7 @@
 import { Client, Storage, ID } from "appwrite";
 import conf from "../conf/conf";
 
-class FileManagement {
+export class FileManagement {
   client = new Client();
   storage;
   constructor() {
@@ -45,3 +45,6 @@ class FileManagement {
     }
   }
 }
+
+const fileServices = new FileManagement();
+export default fileServices;

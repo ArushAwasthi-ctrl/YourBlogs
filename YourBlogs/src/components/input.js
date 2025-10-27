@@ -5,4 +5,7 @@ import LogoutBtn from "./Header/LogoutBtn";
 import Footer from "./Footer/Footer";
 import Input from "./Input.jsx";
 import Button from "./Button.jsx";
-export { Logo ,Container , Header , LogoutBtn , Footer , Input , Button};
+import PostForm from "./PostForm/PostForm.jsx";
+import TinyMCE from "./TinyMCE.jsx";
+import Select from "./Select.jsx";
+export { Logo ,Container , Header , LogoutBtn , Footer , Input , Button , PostForm , TinyMCE , Select};

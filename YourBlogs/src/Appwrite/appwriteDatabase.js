@@ -1,5 +1,5 @@
-import { Client, Databases, ID, Query } from 'appwrite';
-import conf from '../conf/conf.js';
+import { Client, Databases, ID, Query } from "appwrite";
+import conf from "../conf/conf.js";
 
 class DatabaseServices {
   client = new Client();
@@ -14,6 +14,10 @@ class DatabaseServices {
 
   async createPost({ title, slug, content, featuredImage, userId }) {
     try {
+      if (!userId) {
+        throw new Error("User ID is required to create a post");
+      }
+
       const newPost = await this.databases.createDocument(
         conf.appwriteDatabaseId,
         conf.appwriteCollectionId,
@@ -23,12 +27,12 @@ class DatabaseServices {
           slug,
           content,
           FeaturedImage: featuredImage || null,
-          userId,
+          userId
         }
       );
       return newPost;
     } catch (error) {
-      console.error('Error creating new post:', error);
+      console.error("Error creating new post:", error);
       return null;
     }
   }
@@ -48,7 +52,7 @@ class DatabaseServices {
       );
       return updatedPost;
     } catch (error) {
-      console.error('Error updating post:', error);
+      console.error("Error updating post:", error);
       return null;
     }
   }
@@ -61,7 +65,7 @@ class DatabaseServices {
         postId
       );
     } catch (error) {
-      console.error('Error deleting post:', error);
+      console.error("Error deleting post:", error);
       return null;
     }
   }
@@ -75,7 +79,7 @@ class DatabaseServices {
       );
       return post || null;
     } catch (error) {
-      console.error('Appwrite service :: getPost :: error', error);
+      console.error("Appwrite service :: getPost :: error", error);
       return null;
     }
   }
@@ -85,11 +89,11 @@ class DatabaseServices {
       const response = await this.databases.listDocuments(
         conf.appwriteDatabaseId,
         conf.appwriteCollectionId,
-        [Query.equal('status', 'active')]
+        [Query.equal("status", "active")]
       );
       return response.documents || [];
     } catch (error) {
-      console.error('Appwrite service :: getActivePosts :: error', error);
+      console.error("Appwrite service :: getActivePosts :: error", error);
       return [];
     }
   }
