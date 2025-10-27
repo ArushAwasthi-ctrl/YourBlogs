@@ -91,6 +91,10 @@ export default function CreatePost({ post }) {
     }
   };
 
+  // Prepare existing image URL when editing
+  const existingImageId = post?.featuredImage || post?.FeaturedImage;
+  const existingImageUrl = existingImageId ? fileServices.getFilePreview(existingImageId) : null;
+
   // ✅ UI
   return (
     <div className="min-h-[90vh] flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100 px-4">
@@ -147,10 +151,10 @@ export default function CreatePost({ post }) {
           />
 
           {/* ✅ Image Preview Section */}
-          {(previewImage || post?.featuredImage) && (
+          {(previewImage || existingImageUrl) && (
             <div className="w-full mt-3">
               <img
-                src={previewImage || post.featuredImage}
+                src={previewImage || existingImageUrl}
                 alt="Preview"
                 className="rounded-lg shadow-md w-full max-h-64 object-cover"
               />

@@ -4,13 +4,16 @@ import conf from "../conf/conf";
 export class FileManagement {
   client = new Client();
   storage;
+
   constructor() {
     this.client
-      .setProject(conf.appwriteProjectId)
-      .setEndpoint(conf.appwriteUrl);
+      .setEndpoint(conf.appwriteUrl)
+      .setProject(conf.appwriteProjectId);
 
     this.storage = new Storage(this.client);
   }
+
+  // ✅ Upload file to Appwrite Storage
   async createFile(file) {
     try {
       const uploadedFile = await this.storage.createFile(
@@ -18,29 +21,31 @@ export class FileManagement {
         ID.unique(),
         file
       );
-      return uploadedFile || null;
+      return uploadedFile;
     } catch (error) {
-      console.log("Error while creating FileId", error);
+      console.error("Appwrite FileService :: createFile ::", error.message);
       return null;
     }
   }
+
+  // ✅ Delete file by its ID
   async deleteFile(fileId) {
     try {
       await this.storage.deleteFile(conf.appwriteBucketId, fileId);
       return true;
     } catch (error) {
-      console.error("Appwrite service :: deleteFile :: error", error.message);
+      console.error("Appwrite FileService :: deleteFile ::", error.message);
       return false;
     }
   }
+
+  // ✅ Get public URL for image without transformations (works on free plan)
   getFilePreview(fileId) {
     try {
-      return `${conf.appwriteUrl}/storage/buckets/${conf.appwriteBucketId}/files/${fileId}/preview`;
+      // Use getFileView instead of getFilePreview to avoid image transformation limits
+      return this.storage.getFileView(conf.appwriteBucketId, fileId);
     } catch (error) {
-      console.error(
-        "Appwrite service :: getFilePreview :: error",
-        error.message
-      );
+      console.error("Appwrite service :: getFilePreview/getFileView :: error", error.message);
       return null;
     }
   }
