@@ -10,6 +10,8 @@ import Signup from "./pages/Signup.jsx";
 import Login from "./pages/Login.jsx";
 import Addpost from "./pages/Addpost.jsx";
 import Post from "./pages/Post.jsx";
+import EditPost from "./pages/EditPost.jsx";
+import MyPost from "./pages/Mypost.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -33,7 +35,15 @@ const router = createBrowserRouter([
       },
       {
         path: "/post/:postId",
-        element:<Post />
+        element: <Post />,
+      },
+      {
+        path: "/edit-post/:postId",
+        element: <EditPost />,
+      },
+      {
+        path: "my-posts",
+        element: <MyPost />,
       },
     ],
   },

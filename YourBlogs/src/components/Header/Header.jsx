@@ -11,7 +11,7 @@ function Header() {
     { name: "Home", path: "/", active: true },
     { name: "Login", path: "/login", active: !user },
     { name: "Signup", path: "/signup", active: !user },
-    { name: "All Posts", path: "/all-posts", active: user },
+    { name: "My Posts", path: "/my-posts", active: user },
     { name: "Add Post", path: "/add-post", active: user },
   ];
 
