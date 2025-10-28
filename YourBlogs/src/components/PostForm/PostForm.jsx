@@ -99,10 +99,9 @@ export default function CreatePost({ post }) {
       // Prefer route param to decide edit vs create, fallback to prop
       const targetId = postId || post?.$id;
       if (targetId) {
-        // ✅ Update existing post
         dbPost = await postServices.updatePost(targetId, postData);
       } else {
-        // ✅ Create new post
+      
         dbPost = await postServices.createPost(postData);
       }
 
