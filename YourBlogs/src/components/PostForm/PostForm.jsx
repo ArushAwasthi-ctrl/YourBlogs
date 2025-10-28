@@ -4,10 +4,11 @@ import postServices from "../../Appwrite/appwriteDatabase";
 import fileServices from "../../Appwrite/appwriteFiles";
 import { Input, Button, TinyMCE } from "../input";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function CreatePost({ post }) {
-  const { register, handleSubmit, watch, setValue, control } = useForm({
+  const { postId } = useParams();
+  const { register, handleSubmit, watch, setValue, control, reset } = useForm({
     defaultValues: {
       title: post?.title || "",
       slug: post?.slug || "",
@@ -32,6 +33,18 @@ export default function CreatePost({ post }) {
         .replace(/\s/g, "-");
     return "";
   }, []);
+
+  // Keep form in sync if `post` prop changes (e.g., after fetch on Edit page)
+  useEffect(() => {
+    if (post) {
+      reset({
+        title: post?.title || "",
+        slug: post?.slug || "",
+        content: post?.content || "",
+        featuredImage: post?.FeaturedImage || post?.featuredImage || "",
+      });
+    }
+  }, [post, reset]);
 
   // Auto slug updates
   useEffect(() => {
@@ -83,9 +96,11 @@ export default function CreatePost({ post }) {
 
       let dbPost;
 
-      if (post && post.$id) {
+      // Prefer route param to decide edit vs create, fallback to prop
+      const targetId = postId || post?.$id;
+      if (targetId) {
         // ✅ Update existing post
-        dbPost = await postServices.updatePost(post.$id, postData);
+        dbPost = await postServices.updatePost(targetId, postData);
       } else {
         // ✅ Create new post
         dbPost = await postServices.createPost(postData);
