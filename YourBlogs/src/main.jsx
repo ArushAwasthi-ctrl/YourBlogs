@@ -11,7 +11,7 @@ import Login from "./pages/Login.jsx";
 import Addpost from "./pages/Addpost.jsx";
 import Post from "./pages/Post.jsx";
 import EditPost from "./pages/EditPost.jsx";
-import MyPost from "./pages/Mypost.jsx";
+import MyPost from "./pages/MyPost.jsx";
 const router = createBrowserRouter([
   {
     path: "/",

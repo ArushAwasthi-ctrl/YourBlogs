@@ -26,14 +26,15 @@ body {
 
 /* Base typography */
 @layer base {
-  h1,h2,h3,h4,h5,h6 { @apply tracking-tight text-gray-900; }
-  a { @apply text-sky-600 hover:text-sky-700 transition-colors; }
+  h1,h2,h3,h4,h5,h6 { letter-spacing: -0.025em; color: rgb(var(--text)); }
+  a { color: #0ea5e9; transition: color 0.2s ease; }
+  a:hover { color: #0284c7; }
 }
 
 /* Utilities */
 @layer utilities {
   .glass { @apply bg-white/70 backdrop-blur-md border border-white/60; }
-  .card { @apply glass shadow-lg rounded-2xl; }
+  .card { @apply bg-white/70 backdrop-blur-md border border-white/60 shadow-lg rounded-2xl; }
   .btn-primary { @apply inline-flex items-center justify-center px-5 py-2.5 rounded-full text-white font-semibold 
     bg-gradient-to-tr from-indigo-600 via-fuchsia-600 to-pink-500 shadow-lg shadow-fuchsia-500/20 
     hover:shadow-fuchsia-500/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200; }
