@@ -17,7 +17,17 @@ function Signup() {
     setError("");
     setLoading(true);
     try {
-      await authServices.createAccount(data); // Create the account
+      const created = await authServices.createAccount({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
+
+      if (!created) {
+        setError("Failed to create account. Please try again.");
+        setLoading(false);
+        return;
+      }
 
       // Immediately log in
       const user = await authServices.loginAccount({
@@ -33,6 +43,8 @@ function Signup() {
         } else {
           setError("Failed to fetch user data after login.");
         }
+      } else {
+        setError("Login failed right after signup. Please try logging in.");
       }
     } catch (err) {
       const errorMessage =

@@ -1,32 +1,38 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import postServices from "../Appwrite/appwriteDatabase";
-import authServices from "../Appwrite/appwriteAuth";
 import { Link } from "react-router-dom";
-function Home() {
-  const [User, setUser] = useState(null);
-  const [Posts, setPosts] = useState([]);
-  const currentUser = useSelector((state) => state.auth.status);
-  useEffect(() => {
-    if (currentUser) {
-      authServices.getCurrentUser().then((user) => {
-        setUser(user);
-        if (user) {
-          postServices.getActivePosts().then((posts) => setPosts(posts));
-        }
-      });
-    } else {
-      setUser(null);
-      setPosts([]);
-    }
-  }, [currentUser]);
+import { PostCard } from "../components/input";
 
-  if (!User) {
+export default function Home() {
+  const isLoggedIn = useSelector((state) => state.auth.status);
+  const [posts, setPosts] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setPosts([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    postServices
+      .getAllPosts()
+      .then((docs) => setPosts(Array.isArray(docs) ? docs : []))
+      .catch((err) => {
+        console.error("Error fetching posts:", err);
+        setError("Something went wrong while loading posts.");
+      })
+      .finally(() => setLoading(false));
+  }, [isLoggedIn]);
+
+  if (!isLoggedIn) {
     return (
       <div className="flex flex-col items-center justify-center h-[70vh] text-center">
         <p className="text-2xl font-semibold text-gray-700 mb-2">
-          You must be logged in to view this page.
+          You must be logged in to view posts.
         </p>
         <Link
           to="/login"
@@ -38,19 +44,37 @@ function Home() {
     );
   }
 
-  if (User && Posts.length === 0) {
+  if (loading) {
     return (
-      <div className="grow w-full justify-center items-center">
-        No Posts Yet
+      <div className="flex items-center justify-center h-[70vh]">
+        <div className="text-gray-500 text-lg font-medium animate-pulse">Loading posts...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-[70vh] text-red-600 font-medium">
+        {error}
+      </div>
+    );
+  }
+
+  if (posts.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-[70vh] text-gray-500 text-lg font-medium">
+        No posts yet. Start by creating your first post!
       </div>
     );
   }
 
   return (
-    <div className="grow w-full">
-      {/* render posts or other UI when user is available */}
+    <div className="min-h-[90vh] bg-linear-to-br from-gray-50 via-white to-gray-100 px-6 py-10">
+      <div className="max-w-6xl mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post) => (
+          <PostCard key={post.$id} {...post} />
+        ))}
+      </div>
     </div>
   );
 }
-
-export default Home;

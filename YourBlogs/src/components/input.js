@@ -8,4 +8,5 @@ import Button from "./Button.jsx";
 import PostForm from "./PostForm/PostForm.jsx";
 import TinyMCE from "./TinyMCE.jsx";
 import Select from "./Select.jsx";
-export { Logo ,Container , Header , LogoutBtn , Footer , Input , Button , PostForm , TinyMCE , Select};
+import PostCard from "./PostCard.jsx";
+export { Logo ,Container , Header , LogoutBtn , Footer , Input , Button , PostForm , TinyMCE , Select , PostCard};

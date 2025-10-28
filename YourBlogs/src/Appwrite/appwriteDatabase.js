@@ -27,7 +27,7 @@ class DatabaseServices {
           slug,
           content,
           FeaturedImage: featuredImage || null,
-          userId
+          userId,
         }
       );
       return newPost;
@@ -84,16 +84,32 @@ class DatabaseServices {
     }
   }
 
-  async getActivePosts() {
+  async getAllPosts() {
     try {
       const response = await this.databases.listDocuments(
         conf.appwriteDatabaseId,
-        conf.appwriteCollectionId,
-        [Query.equal("status", "active")]
+        conf.appwriteCollectionId
       );
       return response.documents || [];
     } catch (error) {
-      console.error("Appwrite service :: getActivePosts :: error", error);
+      console.error("Appwrite service :: getAllPosts :: error", error);
+      return [];
+    }
+  }
+
+  async getPostsPerUser(userId) {
+    try {
+      if (!userId) {
+        throw new Error("User ID is required to fetch user posts");
+      }
+      const response = await this.databases.listDocuments(
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
+        [Query.equal("userId", userId)]
+      );
+      return response.documents || [];
+    } catch (error) {
+      console.error("Appwrite service :: getUserPosts :: error", error);
       return [];
     }
   }

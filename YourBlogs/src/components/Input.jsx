@@ -18,8 +18,8 @@ function Input(
         ref={ref}
         type={type}
         placeholder={placeholder}
-        className={`border rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400 ${className}`}
-        {...props} // <-- includes everything from register()
+        className={`glass border rounded-xl p-3 outline-none focus:ring-2 focus:ring-sky-400 focus:border-sky-400 shadow-sm ${className}`}
+        {...props}
       />
 
       {props?.error && (

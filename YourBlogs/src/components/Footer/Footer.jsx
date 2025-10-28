@@ -13,8 +13,7 @@ function Footer() {
           {/* Logo & Copyright */}
           <div className="flex flex-col gap-4 md:w-1/3">
             <div className="flex items-center gap-2">
-              <Logo width="50px" />
-              <span className="text-xl font-bold text-blue-600">YourBlogs</span>
+              <Logo />
             </div>
             <p className="text-gray-600 text-sm">
               &copy; {year} YourBlogs. All rights reserved.

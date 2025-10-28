@@ -6,20 +6,21 @@ class AuthServices {
   account;
   constructor() {
     this.client
-      .setProject(conf.appwriteProjectId)
-      .setEndpoint(conf.appwriteUrl);
+      .setEndpoint(conf.appwriteUrl)
+      .setProject(conf.appwriteProjectId);
 
     this.account = new Account(this.client);
   }
 
-  async createAccount({ username, email, password }) {
+  async createAccount({ name, email, password }) {
     try {
-      const user = await this.account.create({
-        userId: ID.unique(),
-        username,
+      // Appwrite expects positional args: userId, email, password, name?
+      const user = await this.account.create(
+        ID.unique(),
         email,
         password,
-      });
+        name || undefined
+      );
       return user;
     } catch (error) {
       console.error("Error creating account:", error.message);
@@ -29,14 +30,9 @@ class AuthServices {
 
   async loginAccount({ email, password }) {
     try {
-      const user = await this.account.createEmailPasswordSession({
-        email,
-        password,
-      });
-      if (user) {
-        return user;
-      }
-      return null;
+      // Use positional args per Appwrite SDK
+      const user = await this.account.createEmailPasswordSession(email, password);
+      return user || null;
     } catch (error) {
       console.error("Login failed:", error.message);
       return null;
@@ -54,7 +50,8 @@ class AuthServices {
 
   async logoutAccount() {
     try {
-      await this.account.deleteSessions('current');
+      // Delete only the current session
+      await this.account.deleteSession('current');
       return true;
     } catch (error) {
       console.error("Logout failed:", error.message);
