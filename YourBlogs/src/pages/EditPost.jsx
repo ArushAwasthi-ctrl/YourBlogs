@@ -20,6 +20,16 @@ function EditPost() {
     }
   }, [postId, navigate]);
 
+  if (!post) {
+    return (
+      <div className="flex justify-center items-center min-h-[90vh]">
+        <p className="text-gray-500 text-lg font-medium animate-pulse">
+          Loading post...
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-[90vh] flex justify-center bg-linear-to-br from-gray-50 via-white to-gray-100 px-4 py-10">
       <Container>

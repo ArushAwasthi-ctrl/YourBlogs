@@ -12,18 +12,17 @@ export default function CreatePost({ post }) {
       title: post?.title || "",
       slug: post?.slug || "",
       content: post?.content || "",
-      featuredImage: post?.featuredImage || "",
+      featuredImage: post?.FeaturedImage || post?.featuredImage || "",
     },
   });
 
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.userData);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
 
-  // ✅ Convert title → slug
+  // Convert title → slug
   const slugTransform = useCallback((value) => {
     if (value && typeof value === "string")
       return value
@@ -34,7 +33,7 @@ export default function CreatePost({ post }) {
     return "";
   }, []);
 
-  // ✅ Watch for title → auto-slug updates
+  // Auto slug updates
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === "title") {
@@ -44,7 +43,7 @@ export default function CreatePost({ post }) {
     return () => subscription.unsubscribe();
   }, [watch, slugTransform, setValue]);
 
-  // ✅ Watch for image → live preview updates
+  // Image preview updates
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === "image" && value.image?.[0]) {
@@ -55,10 +54,10 @@ export default function CreatePost({ post }) {
     return () => subscription.unsubscribe();
   }, [watch]);
 
-  // ✅ Handle form submit
+  // ✅ Submit handler (Handles both Create and Edit)
   const submit = async (data) => {
     if (!user) {
-      setError("You must be logged in to create a post.");
+      setError("You must be logged in to create or edit a post.");
       return;
     }
 
@@ -66,8 +65,9 @@ export default function CreatePost({ post }) {
     setLoading(true);
 
     try {
-      let featuredImageId = null;
+      let featuredImageId = post?.FeaturedImage || post?.featuredImage || null;
 
+      // Upload new image only if user selected one
       if (data.image && data.image[0]) {
         const file = await fileServices.createFile(data.image[0]);
         if (file) featuredImageId = file.$id;
@@ -81,9 +81,18 @@ export default function CreatePost({ post }) {
         userId: user?.$id,
       };
 
-      const dbPost = await postServices.createPost(postData);
+      let dbPost;
+
+      if (post && post.$id) {
+        // ✅ Update existing post
+        dbPost = await postServices.updatePost(post.$id, postData);
+      } else {
+        // ✅ Create new post
+        dbPost = await postServices.createPost(postData);
+      }
+
       if (dbPost) navigate(`/post/${dbPost.$id}`);
-      else setError("Failed to create post. Try again.");
+      else setError("Failed to save post. Try again.");
     } catch (err) {
       setError(err?.message || "Something went wrong.");
     } finally {
@@ -92,10 +101,11 @@ export default function CreatePost({ post }) {
   };
 
   // Prepare existing image URL when editing
-  const existingImageId = post?.featuredImage || post?.FeaturedImage;
-  const existingImageUrl = existingImageId ? fileServices.getFilePreview(existingImageId) : null;
+  const existingImageId = post?.FeaturedImage || post?.featuredImage;
+  const existingImageUrl = existingImageId
+    ? fileServices.getFilePreview(existingImageId)
+    : null;
 
-  // ✅ UI
   return (
     <div className="min-h-[90vh] flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100 px-4">
       <div className="w-full max-w-3xl bg-white/80 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl p-8 md:p-10 transition-all duration-300">
@@ -115,14 +125,12 @@ export default function CreatePost({ post }) {
         )}
 
         <form onSubmit={handleSubmit(submit)} className="space-y-5">
-          {/* Title */}
           <Input
             label="Title"
             placeholder="Enter post title"
             {...register("title", { required: "Title is required" })}
           />
 
-          {/* Slug */}
           <Input
             label="Slug"
             placeholder="Auto-generated from title"
@@ -134,7 +142,6 @@ export default function CreatePost({ post }) {
             }
           />
 
-          {/* TinyMCE Editor */}
           <TinyMCE
             name="content"
             control={control}
@@ -142,7 +149,6 @@ export default function CreatePost({ post }) {
             defaultValue={post?.content || ""}
           />
 
-          {/* Image Input */}
           <Input
             label="Featured Image"
             type="file"
@@ -150,7 +156,6 @@ export default function CreatePost({ post }) {
             {...register("image", { required: !post })}
           />
 
-          {/* ✅ Image Preview Section */}
           {(previewImage || existingImageUrl) && (
             <div className="w-full mt-3">
               <img
@@ -161,7 +166,6 @@ export default function CreatePost({ post }) {
             </div>
           )}
 
-          {/* Submit Button */}
           <Button
             type="submit"
             className={`w-full ${
