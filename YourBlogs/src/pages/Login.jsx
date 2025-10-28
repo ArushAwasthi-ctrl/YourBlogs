@@ -27,8 +27,6 @@ function Login() {
       }
 
       const userData = await authServices.getCurrentUser();
-      console.log(userData);
-    
       if (userData) {
         dispatch(login(userData));
         navigate("/");
@@ -44,27 +42,39 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] bg-gray-50">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-        <div className="flex justify-center mb-4">
-          <span className="inline-block w-full max-w-[90px]">
-            <Logo width="100%" />
+    <div className="min-h-[90vh] flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100 px-4">
+      <div className="w-full max-w-md bg-white/80 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl p-8 md:p-10 transition-all duration-300">
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <span className="inline-block w-20 sm:w-24">
+            <Logo />
           </span>
         </div>
-        <h2 className="text-2xl font-bold text-center text-gray-800">
+
+        {/* Heading */}
+        <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800">
           Welcome Back
         </h2>
-        <p className="text-center text-gray-500 mt-2 mb-6">
+        <p className="mt-2 text-center text-gray-600 text-sm md:text-base">
           Login to your account to continue
         </p>
+
+        {/* Error */}
         {error && (
-          <p className="text-red-600 text-center mb-4 font-medium">{error}</p>
+          <p className="text-red-500 text-center mt-4 bg-red-50 py-2 rounded-md border border-red-200">
+            {error}
+          </p>
         )}
-        <form onSubmit={handleSubmit(submitLogin)} className="space-y-5">
+
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit(submitLogin)}
+          className="mt-6 space-y-5 text-sm md:text-base"
+        >
           <Input
-            label="Email"
-            placeholder="Enter your email"
+            label="Email Address"
             type="email"
+            placeholder="Enter your email"
             {...register("email", {
               required: "Email is required",
               validate: {
@@ -74,6 +84,7 @@ function Login() {
               },
             })}
           />
+
           <Input
             label="Password"
             type="password"
@@ -82,18 +93,24 @@ function Login() {
               required: "Password is required",
             })}
           />
+
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full py-2 text-lg font-semibold transition-all duration-200"
+            className={`w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-lg font-medium transition-all duration-200 ${
+              btnText === "Loading..." ? "cursor-not-allowed opacity-70" : ""
+            }`}
+            disabled={btnText === "Loading..."}
           >
             {btnText}
           </Button>
         </form>
-        <p className="text-center text-gray-500 mt-6">
-          Don’t have an account?
+
+        {/* Footer */}
+        <p className="text-center text-gray-600 mt-6 text-sm md:text-base">
+          Don’t have an account?{" "}
           <Link
             to="/signup"
-            className="text-blue-600 font-semibold hover:underline"
+            className="text-blue-600 font-semibold hover:underline hover:text-blue-700 transition-colors"
           >
             Sign up
           </Link>

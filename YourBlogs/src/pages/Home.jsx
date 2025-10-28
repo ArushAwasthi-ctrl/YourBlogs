@@ -30,13 +30,13 @@ export default function Home() {
 
   if (!isLoggedIn) {
     return (
-      <div className="flex flex-col items-center justify-center h-[70vh] text-center">
-        <p className="text-2xl font-semibold text-gray-700 mb-2">
+      <div className="flex flex-col items-center justify-center min-h-[80vh] bg-linear-to-br from-gray-50 via-white to-gray-100 px-6 text-center">
+        <p className="text-2xl font-semibold text-gray-700 mb-3">
           You must be logged in to view posts.
         </p>
         <Link
           to="/login"
-          className="text-white bg-blue-600 hover:bg-blue-700 font-medium px-5 py-2 rounded-md transition-all duration-200"
+          className="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all duration-200 shadow-md"
         >
           Log In
         </Link>
@@ -46,15 +46,17 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[70vh]">
-        <div className="text-gray-500 text-lg font-medium animate-pulse">Loading posts...</div>
+      <div className="flex items-center justify-center min-h-[80vh] bg-linear-to-br from-gray-50 via-white to-gray-100">
+        <p className="text-gray-500 text-lg font-medium animate-pulse">
+          Loading posts...
+        </p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-[70vh] text-red-600 font-medium">
+      <div className="flex items-center justify-center min-h-[80vh] text-red-600 font-medium bg-linear-to-br from-gray-50 via-white to-gray-100">
         {error}
       </div>
     );
@@ -62,15 +64,23 @@ export default function Home() {
 
   if (posts.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[70vh] text-gray-500 text-lg font-medium">
-        No posts yet. Start by creating your first post!
+      <div className="flex flex-col items-center justify-center min-h-[80vh] bg-linear-to-br from-gray-50 via-white to-gray-100 px-6 text-center">
+        <p className="text-gray-600 text-lg font-medium mb-2">
+          No posts yet.
+        </p>
+        <Link
+          to="/add-post"
+          className="px-6 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition-all duration-200 shadow-md"
+        >
+          Create Your First Post
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[90vh] bg-linear-to-br from-gray-50 via-white to-gray-100 px-6 py-10">
-      <div className="max-w-6xl mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="min-h-[90vh] bg-linear-to-br from-gray-50 via-white to-gray-100 px-5 py-10">
+      <div className="max-w-7xl mx-auto grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 transition-all duration-300">
         {posts.map((post) => (
           <PostCard key={post.$id} {...post} />
         ))}

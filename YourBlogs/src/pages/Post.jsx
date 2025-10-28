@@ -34,30 +34,31 @@ export default function Post() {
   if (!post)
     return (
       <div className="min-h-[90vh] flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100">
-        <div className="text-gray-500 text-lg font-medium animate-pulse">
+        <p className="text-gray-500 text-lg font-medium animate-pulse">
           Loading post...
-        </div>
+        </p>
       </div>
     );
 
   const imageId = post.featuredImage || post.FeaturedImage;
   const imageUrl = imageId ? fileServices.getFilePreview(imageId) : null;
-   
+
   return (
-    <div className="min-h-[90vh] flex justify-center bg-linear-to-br from-gray-50 via-white to-gray-100 px-4 py-10">
-      <div className="w-full max-w-4xl bg-white/80 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl overflow-hidden">
+    <div className="min-h-[90vh] flex justify-center bg-linear-to-br from-gray-50 via-white to-gray-100 px-4 sm:px-6 lg:px-8 py-10">
+      <article className="w-full max-w-4xl bg-white/80 backdrop-blur-md border border-gray-200 shadow-md sm:shadow-lg rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl">
         {/* Featured Image */}
         {imageUrl && (
           <img
             src={imageUrl}
             alt={post.title}
-            className="w-full max-h-[450px] object-cover"
+            className="w-full max-h-[450px] object-cover sm:object-center"
+            loading="lazy"
           />
         )}
 
-        {/* Content */}
-        <div className="p-8 md:p-10">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">
+        {/* Post Content */}
+        <div className="p-6 sm:p-8 md:p-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3 sm:mb-4 wrap-break-word leading-snug">
             {post.title}
           </h1>
 
@@ -70,15 +71,15 @@ export default function Post() {
             )}
           </p>
 
-          {/* Post content rendered safely */}
+          {/* Post Body */}
           <div
-            className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
+            className="prose prose-sm sm:prose md:prose-lg max-w-none text-gray-700 leading-relaxed prose-headings:text-gray-800 prose-a:text-blue-600 hover:prose-a:underline"
             dangerouslySetInnerHTML={{ __html: post.content }}
           ></div>
 
-          {/* Buttons */}
+          {/* Buttons for Author */}
           {isAuthor && (
-            <div className="flex gap-4 mt-10">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-10">
               <Link
                 to={`/edit-post/${post.$id}`}
                 className="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg font-medium transition-all duration-200"
@@ -95,7 +96,7 @@ export default function Post() {
             </div>
           )}
         </div>
-      </div>
+      </article>
     </div>
   );
 }

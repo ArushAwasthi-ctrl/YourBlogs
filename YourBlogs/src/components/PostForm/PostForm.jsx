@@ -23,18 +23,12 @@ export default function CreatePost({ post }) {
   const [error, setError] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
 
-  // Convert title → slug
   const slugTransform = useCallback((value) => {
     if (value && typeof value === "string")
-      return value
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-zA-Z\d\s]+/g, "-")
-        .replace(/\s/g, "-");
+      return value.trim().toLowerCase().replace(/[^a-zA-Z\d\s]+/g, "-").replace(/\s/g, "-");
     return "";
   }, []);
 
-  // Keep form in sync if `post` prop changes (e.g., after fetch on Edit page)
   useEffect(() => {
     if (post) {
       reset({
@@ -46,7 +40,6 @@ export default function CreatePost({ post }) {
     }
   }, [post, reset]);
 
-  // Auto slug updates
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === "title") {
@@ -56,7 +49,6 @@ export default function CreatePost({ post }) {
     return () => subscription.unsubscribe();
   }, [watch, slugTransform, setValue]);
 
-  // Image preview updates
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === "image" && value.image?.[0]) {
@@ -67,7 +59,6 @@ export default function CreatePost({ post }) {
     return () => subscription.unsubscribe();
   }, [watch]);
 
-  // ✅ Submit handler (Handles both Create and Edit)
   const submit = async (data) => {
     if (!user) {
       setError("You must be logged in to create or edit a post.");
@@ -79,8 +70,6 @@ export default function CreatePost({ post }) {
 
     try {
       let featuredImageId = post?.FeaturedImage || post?.featuredImage || null;
-
-      // Upload new image only if user selected one
       if (data.image && data.image[0]) {
         const file = await fileServices.createFile(data.image[0]);
         if (file) featuredImageId = file.$id;
@@ -94,16 +83,10 @@ export default function CreatePost({ post }) {
         userId: user?.$id,
       };
 
-      let dbPost;
-
-      // Prefer route param to decide edit vs create, fallback to prop
       const targetId = postId || post?.$id;
-      if (targetId) {
-        dbPost = await postServices.updatePost(targetId, postData);
-      } else {
-      
-        dbPost = await postServices.createPost(postData);
-      }
+      const dbPost = targetId
+        ? await postServices.updatePost(targetId, postData)
+        : await postServices.createPost(postData);
 
       if (dbPost) navigate(`/post/${dbPost.$id}`);
       else setError("Failed to save post. Try again.");
@@ -114,31 +97,28 @@ export default function CreatePost({ post }) {
     }
   };
 
-  // Prepare existing image URL when editing
   const existingImageId = post?.FeaturedImage || post?.featuredImage;
-  const existingImageUrl = existingImageId
-    ? fileServices.getFilePreview(existingImageId)
-    : null;
+  const existingImageUrl = existingImageId ? fileServices.getFilePreview(existingImageId) : null;
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center bg-linear-to-br from-gray-50 via-white to-gray-100 px-4">
-      <div className="w-full max-w-3xl bg-white/80 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl p-8 md:p-10 transition-all duration-300">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-3">
+    <section className="min-h-[90vh] flex items-center justify-center bg-linear-to-br from-sky-50 via-violet-50 to-pink-50 px-3 sm:px-6 py-8">
+      <div className="w-full max-w-3xl bg-white/80 backdrop-blur-md border border-gray-200 shadow-xl rounded-2xl p-6 sm:p-10 transition-all duration-300">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-3 gradient-text">
           {post ? "Edit Post" : "Create a New Post"}
         </h2>
         <p className="text-center text-gray-600 text-sm mb-6">
           {post
-            ? "Update your existing post below."
-            : "Share your thoughts with the community."}
+            ? "Update your post details below."
+            : "Write your thoughts and share them with the world."}
         </p>
 
         {error && (
-          <p className="text-red-500 text-center mt-2 mb-4 bg-red-50 py-2 rounded-md border border-red-200">
+          <p className="text-red-600 text-center mb-5 bg-red-50 py-2 rounded-lg border border-red-200 text-sm font-medium">
             {error}
           </p>
         )}
 
-        <form onSubmit={handleSubmit(submit)} className="space-y-5">
+        <form onSubmit={handleSubmit(submit)} className="space-y-5 sm:space-y-6">
           <Input
             label="Title"
             placeholder="Enter post title"
@@ -150,9 +130,7 @@ export default function CreatePost({ post }) {
             placeholder="Auto-generated from title"
             {...register("slug", { required: "Slug is required" })}
             onInput={(e) =>
-              setValue("slug", slugTransform(e.currentTarget.value), {
-                shouldValidate: true,
-              })
+              setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true })
             }
           />
 
@@ -175,7 +153,7 @@ export default function CreatePost({ post }) {
               <img
                 src={previewImage || existingImageUrl}
                 alt="Preview"
-                className="rounded-lg shadow-md w-full max-h-64 object-cover"
+                className="rounded-xl shadow-md w-full max-h-64 object-cover"
               />
             </div>
           )}
@@ -184,9 +162,9 @@ export default function CreatePost({ post }) {
             type="submit"
             className={`w-full ${
               post
-                ? "bg-green-600 hover:bg-green-700"
-                : "bg-blue-600 hover:bg-blue-700"
-            } text-white py-2.5 rounded-lg text-lg font-medium transition-all duration-200 ${
+                ? "bg-green-600 hover:bg-green-700 focus:ring-green-400"
+                : "bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-400"
+            } text-white py-2.5 rounded-lg text-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
               loading ? "cursor-not-allowed opacity-70" : ""
             }`}
             disabled={loading}
@@ -194,13 +172,13 @@ export default function CreatePost({ post }) {
             {loading
               ? post
                 ? "Updating..."
-                : "Creating..."
+                : "Publishing..."
               : post
               ? "Update Post"
               : "Publish Post"}
           </Button>
         </form>
       </div>
-    </div>
+    </section>
   );
 }
